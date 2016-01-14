@@ -1,0 +1,195 @@
+From f7d7befae8bcc2db0093f8adaa9f72eeb7ad891e Mon Sep 17 00:00:00 2001
+From: Stanislav Malyshev <stas@php.net>
+Date: Sun, 31 May 2015 22:47:52 -0700
+Subject: [PATCH] Fix #69719 - more checks for nulls in paths
+
+---
+ ext/dom/document.c | 22 +++++++++++++++++-----
+ ext/gd/gd.c        | 16 ++++++++--------
+ 2 files changed, 25 insertions(+), 13 deletions(-)
+
+diff --git a/ext/dom/document.c b/ext/dom/document.c
+index 48a19dd..097fcba 100644
+--- a/ext/dom/document.c
++++ b/ext/dom/document.c
+@@ -1761,7 +1761,7 @@ PHP_FUNCTION(dom_document_save)
+ 	char *file;
+ 	long options = 0;
+ 
+-	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "Os|l", &id, dom_document_class_entry, &file, &file_len, &options) == FAILURE) {
++	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "Op|l", &id, dom_document_class_entry, &file, &file_len, &options) == FAILURE) {
+ 		return;
+ 	}
+ 
+@@ -1990,7 +1990,7 @@ static void _dom_document_schema_validate(INTERNAL_FUNCTION_PARAMETERS, int type
+ 	int                     is_valid;
+ 	char resolved_path[MAXPATHLEN + 1];
+ 
+-	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "Op", &id, dom_document_class_entry, &source, &source_len) == FAILURE) {
++	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "Os", &id, dom_document_class_entry, &source, &source_len) == FAILURE) {
+ 		return;
+ 	}
+ 
+@@ -2003,6 +2003,10 @@ static void _dom_document_schema_validate(INTERNAL_FUNCTION_PARAMETERS, int type
+ 
+ 	switch (type) {
+ 	case DOM_LOAD_FILE:
++		if (CHECK_NULL_PATH(source, source_len)) {
++			php_error_docref(NULL TSRMLS_CC, E_WARNING, "Invalid Schema file source");
++			RETURN_FALSE;
++		}
+ 		valid_file = _dom_get_valid_file_path(source, resolved_path, MAXPATHLEN  TSRMLS_CC);
+ 		if (!valid_file) {
+ 			php_error_docref(NULL TSRMLS_CC, E_WARNING, "Invalid Schema file source");
+@@ -2079,7 +2083,7 @@ static void _dom_document_relaxNG_validate(INTERNAL_FUNCTION_PARAMETERS, int typ
+ 	int                     is_valid;
+ 	char resolved_path[MAXPATHLEN + 1];
+ 
+-	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "Op", &id, dom_document_class_entry, &source, &source_len) == FAILURE) {
++	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "Os", &id, dom_document_class_entry, &source, &source_len) == FAILURE) {
+ 		return;
+ 	}
+ 
+@@ -2092,6 +2096,10 @@ static void _dom_document_relaxNG_validate(INTERNAL_FUNCTION_PARAMETERS, int typ
+ 
+ 	switch (type) {
+ 	case DOM_LOAD_FILE:
++		if (CHECK_NULL_PATH(source, source_len)) {
++			php_error_docref(NULL TSRMLS_CC, E_WARNING, "Invalid RelaxNG file source");
++			RETURN_FALSE;
++		}
+ 		valid_file = _dom_get_valid_file_path(source, resolved_path, MAXPATHLEN  TSRMLS_CC);
+ 		if (!valid_file) {
+ 			php_error_docref(NULL TSRMLS_CC, E_WARNING, "Invalid RelaxNG file source");
+@@ -2172,7 +2180,7 @@ static void dom_load_html(INTERNAL_FUNCTION_PARAMETERS, int mode) /* {{{ */
+ 
+ 	id = getThis();
+ 
+-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "p|l", &source, &source_len, &options) == FAILURE) {
++	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s|l", &source, &source_len, &options) == FAILURE) {
+ 		return;
+ 	}
+ 
+@@ -2182,6 +2190,10 @@ static void dom_load_html(INTERNAL_FUNCTION_PARAMETERS, int mode) /* {{{ */
+ 	}
+ 
+ 	if (mode == DOM_LOAD_FILE) {
++		if (CHECK_NULL_PATH(source, source_len)) {
++			php_error_docref(NULL TSRMLS_CC, E_WARNING, "Invalid file source");
++			RETURN_FALSE;
++		}
+ 		ctxt = htmlCreateFileParserCtxt(source, NULL);
+ 	} else {
+ 		source_len = xmlStrlen(source);
+@@ -2270,7 +2282,7 @@ PHP_FUNCTION(dom_document_save_html_file)
+ 	char *file;
+ 	const char *encoding;
+ 
+-	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "Os", &id, dom_document_class_entry, &file, &file_len) == FAILURE) {
++	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "Op", &id, dom_document_class_entry, &file, &file_len) == FAILURE) {
+ 		return;
+ 	}
+ 
+diff --git a/ext/gd/gd.c b/ext/gd/gd.c
+index d258c3d..e527575 100644
+--- a/ext/gd/gd.c
++++ b/ext/gd/gd.c
+@@ -1790,7 +1790,7 @@ PHP_FUNCTION(imagefilledarc)
+ 	long cx, cy, w, h, ST, E, col, style;
+ 	gdImagePtr im;
+ 	int e, st;
+-	
++
+ 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "rllllllll", &IM, &cx, &cy, &w, &h, &ST, &E, &col, &style) == FAILURE) {
+ 		return;
+ 	}
+@@ -2033,7 +2033,7 @@ PHP_FUNCTION(imagegrabwindow)
+ 	if ( handle == 0 ) {
+ 		goto clean;
+ 	}
+-	pPrintWindow = (tPrintWindow) GetProcAddress(handle, "PrintWindow");  
++	pPrintWindow = (tPrintWindow) GetProcAddress(handle, "PrintWindow");
+ 
+ 	if ( pPrintWindow )  {
+ 		pPrintWindow(window, memDC, (UINT) client_area);
+@@ -3984,7 +3984,7 @@ static void php_imagettftext_common(INTERNAL_FUNCTION_PARAMETERS, int mode, int
+ 			if (zend_hash_get_current_data_ex(HASH_OF(EXT), (void **) &item, &pos) == FAILURE) {
+ 				continue;
+ 			}
+-		
++
+ 			if (strcmp("linespacing", key) == 0) {
+ 				convert_to_double_ex(item);
+ 				strex.flags |= gdFTEX_LINESPACE;
+@@ -4006,7 +4006,7 @@ static void php_imagettftext_common(INTERNAL_FUNCTION_PARAMETERS, int mode, int
+ #endif
+ 
+ 	PHP_GD_CHECK_OPEN_BASEDIR(fontname, "Invalid font filename");
+-	
++
+ #ifdef USE_GD_IMGSTRTTF
+ # if HAVE_GD_STRINGFTEX
+ 	if (extended) {
+@@ -4071,7 +4071,7 @@ PHP_FUNCTION(imagepsloadfont)
+ 	struct stat st;
+ #endif
+ 
+-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &file, &file_len) == FAILURE) {
++	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "p", &file, &file_len) == FAILURE) {
+ 		return;
+ 	}
+ 
+@@ -4411,11 +4411,11 @@ PHP_FUNCTION(imagepsbbox)
+ 	if (argc != 3 && argc != 6) {
+ 		ZEND_WRONG_PARAM_COUNT();
+ 	}
+-	
++
+ 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "srl|lld", &str, &str_len, &fnt, &sz, &sp, &wd, &angle) == FAILURE) {
+ 		return;
+ 	}
+-	
++
+ 	if (argc == 6) {
+ 		space = sp;
+ 		add_width = wd;
+@@ -4600,7 +4600,7 @@ static void _php_image_convert(INTERNAL_FUNCTION_PARAMETERS, int image_type )
+ #ifdef HAVE_GD_JPG
+     long ignore_warning;
+ #endif
+-	
++
+ 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "pplll", &f_org, &f_org_len, &f_dest, &f_dest_len, &height, &width, &threshold) == FAILURE) {
+ 		return;
+ 	}
+-- 
+2.1.4
+
+From eee8b6c33fc968ef8c496db8fb54e8c9d9d5a8f9 Mon Sep 17 00:00:00 2001
+From: Stanislav Malyshev <stas@php.net>
+Date: Tue, 9 Jun 2015 17:11:33 -0700
+Subject: [PATCH] fix test
+
+---
+ ext/dom/tests/DOMDocument_loadHTMLfile_error2.phpt | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/ext/dom/tests/DOMDocument_loadHTMLfile_error2.phpt b/ext/dom/tests/DOMDocument_loadHTMLfile_error2.phpt
+index 75004e2..e0d0923 100644
+--- a/ext/dom/tests/DOMDocument_loadHTMLfile_error2.phpt
++++ b/ext/dom/tests/DOMDocument_loadHTMLfile_error2.phpt
+@@ -15,9 +15,9 @@ $result = $doc->loadHTMLFile("");
+ assert('$result === false');
+ $doc = new DOMDocument();
+ $result = $doc->loadHTMLFile("text.html\0something");
+-assert('$result === null');
++assert('$result === false');
+ ?>
+ --EXPECTF--
+ %r(PHP ){0,1}%rWarning: DOMDocument::loadHTMLFile(): Empty string supplied as input %s
+ 
+-%r(PHP ){0,1}%rWarning: DOMDocument::loadHTMLFile() expects parameter 1 to be a valid path, string given %s
++%r(PHP ){0,1}%rWarning: DOMDocument::loadHTMLFile(): Invalid file source %s
+-- 
+2.1.4
+
