@@ -111,7 +111,7 @@
 Summary: PHP scripting language for creating dynamic web sites
 Name: %{?scl_prefix}php
 Version: 5.6.5
-Release: 7%{?dist}
+Release: 8%{?dist}
 # All files licensed under PHP version 3.01, except
 # Zend is licensed under Zend
 # TSRM is licensed under BSD
@@ -180,6 +180,18 @@ Patch151: php-5.6.5-CVE-2015-2783.patch
 Patch152: php-5.6.5-CVE-2015-3329.patch
 Patch153: php-5.6.5-bug68819.patch
 Patch154: php-5.6.5-bug69152.patch
+Patch155: php-5.6.5-CVE-2015-5589.patch
+Patch156: php-5.6.5-CVE-2015-5590.patch
+Patch157: php-5.6.5-CVE-2015-6833.patch
+Patch158: php-5.6.5-CVE-2015-7803.patch
+Patch159: php-5.6.5-CVE-2015-7804.patch
+Patch160: php-5.6.5-CVE-2015-6837.patch
+Patch161: php-5.6.5-CVE-2015-6835.patch
+Patch162: php-5.6.5-CVE-2015-6834-1.patch
+Patch163: php-5.6.5-CVE-2015-6832.patch
+Patch164: php-5.6.5-CVE-2015-6831.patch
+Patch165: php-5.6.5-CVE-2015-6834-2.patch
+Patch166: php-5.6.5-CVE-2015-6836.patch
 
 
 # Fixes for tests (300+)
@@ -769,6 +781,18 @@ support for using the enchant library to PHP.
 %patch152 -p1 -b .cve3329
 %patch153 -p1 -b .bug68819
 %patch154 -p1 -b .bug69152
+%patch155 -p1 -b .cve5589
+%patch156 -p1 -b .cve5590
+%patch157 -p1 -b .cve6833
+%patch158 -p1 -b .cve7803
+%patch159 -p1 -b .cve7804
+%patch160 -p1 -b .cve6837
+%patch161 -p1 -b .cve6835
+%patch162 -p1 -b .cve6834
+%patch163 -p1 -b .cve6832
+%patch164 -p1 -b .cve6831
+%patch165 -p1 -b .cve6834
+%patch166 -p1 -b .cve6836
 
 # Fixes for tests
 %patch300 -p1 -b .datetests
@@ -1691,6 +1715,30 @@ fi
 
 
 %changelog
+* Mon Feb 15 2016 Remi Collet <rcollet@redhat.com> - 5.6.5-8
+- Phar: fix segmentation fault in Phar::convertToData on
+  invalid file CVE-2015-5589
+- Phar: fix buffer overflow and stack smashing error in
+  phar_fix_filepath CVE-2015-5590
+- Phar: fix files from archive can be extracted outside of
+  destination directory using phar CVE-2015-6833
+- Phar: NULL pointer dereference in phar_get_fp_offset()
+  CVE-2015-7803
+- Phar: uninitialized pointer in phar_make_dirstream()
+  CVE-2015-7804
+- Xslt: fix NULL pointer dereference in XSLTProcessor class
+  CVE-2015-6837 CVE-2015-6838
+- Core: fix use-after-free vulnerability in session
+  deserializer CVE-2015-6835
+- Core:  fix multiple unserialization use-after-free issues
+  CVE-2015-6834
+- Spl: fix dangling pointer in the unserialization of
+  ArrayObject items CVE-2015-6832
+- Spl: fix Use After Free Vulnerability in unserialize()
+  CVE-2015-6831
+- Soap: fix type confusion in SOAP serialize_function_call()
+  CVE-2015-6836
+
 * Wed Jun 10 2015 Remi Collet <rcollet@redhat.com> - 5.6.5-7
 - fix more functions accept paths with NUL character #1213407
 
