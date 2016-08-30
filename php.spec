@@ -143,7 +143,7 @@
 Summary:  PHP scripting language for creating dynamic web sites
 Name:     %{?scl_prefix}php
 Version:  5.4.40
-Release:  3%{?dist}
+Release:  4%{?dist}
 # All files licensed under PHP version 3.01, except
 # Zend is licensed under Zend
 # TSRM is licensed under BSD
@@ -199,6 +199,7 @@ Patch146: php-5.4.40-CVE-2015-4021.patch
 Patch147: php-5.4.40-CVE-2015-4024.patch
 Patch148: php-5.4.40-CVE-2015-4025.patch
 Patch150: php-5.4.40-bug69353.patch
+Patch155: php-5.4.40-CVE-2016-5385.patch
 
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
@@ -856,6 +857,7 @@ support for using the enchant library to PHP.
 %patch147 -p1 -b .cve4024
 %patch148 -p1 -b .cve4025
 %patch150 -p1 -b .bug69353
+%patch155 -p1 -b .cve5385
 
 
 # Prevent %%doc confusion over LICENSE files
@@ -1699,6 +1701,10 @@ fi
 
 
 %changelog
+* Fri Jul 22 2016 Remi Collet <rcollet@redhat.com> - 5.4.40-4
+- don't set environmental variable based on user supplied Proxy
+  request header CVE-2016-5385
+
 * Wed Jun 10 2015 Remi Collet <rcollet@redhat.com> - 5.4.40-3
 - fix more functions accept paths with NUL character #1213407
 
