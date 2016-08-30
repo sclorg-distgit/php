@@ -111,7 +111,7 @@
 Summary: PHP scripting language for creating dynamic web sites
 Name: %{?scl_prefix}php
 Version: 5.6.5
-Release: 8%{?dist}
+Release: 9%{?dist}
 # All files licensed under PHP version 3.01, except
 # Zend is licensed under Zend
 # TSRM is licensed under BSD
@@ -192,6 +192,7 @@ Patch163: php-5.6.5-CVE-2015-6832.patch
 Patch164: php-5.6.5-CVE-2015-6831.patch
 Patch165: php-5.6.5-CVE-2015-6834-2.patch
 Patch166: php-5.6.5-CVE-2015-6836.patch
+Patch167: php-5.6.5-CVE-2016-5385.patch
 
 
 # Fixes for tests (300+)
@@ -793,6 +794,7 @@ support for using the enchant library to PHP.
 %patch164 -p1 -b .cve6831
 %patch165 -p1 -b .cve6834
 %patch166 -p1 -b .cve6836
+%patch167 -p1 -b .cve5385
 
 # Fixes for tests
 %patch300 -p1 -b .datetests
@@ -1715,6 +1717,10 @@ fi
 
 
 %changelog
+* Mon Jul 25 2016 Remi Collet <rcollet@redhat.com> - 5.6.5-9
+- don't set environmental variable based on user supplied Proxy
+  request header CVE-2016-5385
+
 * Mon Feb 15 2016 Remi Collet <rcollet@redhat.com> - 5.6.5-8
 - Phar: fix segmentation fault in Phar::convertToData on
   invalid file CVE-2015-5589
