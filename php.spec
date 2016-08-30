@@ -163,7 +163,7 @@
 Summary:  PHP scripting language for creating dynamic web sites
 Name:     %{?scl_prefix}php
 Version:  5.5.21
-Release:  4%{?dist}
+Release:  5%{?dist}
 # All files licensed under PHP version 3.01, except
 # Zend is licensed under Zend
 # TSRM is licensed under BSD
@@ -231,6 +231,7 @@ Patch151: php-5.5.21-CVE-2015-2783.patch
 Patch152: php-5.5.21-CVE-2015-3329.patch
 Patch153: php-5.5.21-bug68819.patch
 Patch154: php-5.5.21-bug69152.patch
+Patch155: php-5.5.21-CVE-2016-5385.patch
 
 # Fixes for tests
 
@@ -913,6 +914,7 @@ support for using the enchant library to PHP.
 %patch152 -p1 -b .cve3329
 %patch153 -p1 -b .bug68819
 %patch154 -p1 -b .bug69152
+%patch155 -p1 -b .cve5385
 
 # Prevent %%doc confusion over LICENSE files
 cp Zend/LICENSE Zend/ZEND_LICENSE
@@ -1823,6 +1825,10 @@ fi
 
 
 %changelog
+* Fri Jul 22 2016 Remi Collet <rcollet@redhat.com> - 5.5.21-5
+- don't set environmental variable based on user supplied Proxy
+  request header CVE-2016-5385
+
 * Wed Jun 10 2015 Remi Collet <rcollet@redhat.com> - 5.5.21-4
 - fix more functions accept paths with NUL character #1213407
 
