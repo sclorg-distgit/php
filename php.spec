@@ -111,7 +111,7 @@
 Summary: PHP scripting language for creating dynamic web sites
 Name: %{?scl_prefix}php
 Version: 5.6.24
-Release: 1%{?dist}
+Release: 2%{?dist}
 # All files licensed under PHP version 3.01, except
 # Zend is licensed under Zend
 # TSRM is licensed under BSD
@@ -140,6 +140,7 @@ Patch5: php-5.6.3-includedir.patch
 Patch6: php-5.6.3-embed.patch
 Patch7: php-5.3.0-recode.patch
 Patch8: php-5.6.17-libdb.patch
+Patch9: php-5.5.30-curl.patch
 
 # Fixes for extension modules
 
@@ -712,6 +713,7 @@ support for using the enchant library to PHP.
 %patch6 -p1 -b .embed
 %patch7 -p1 -b .recode
 %patch8 -p1 -b .libdb
+%patch9 -p1 -b .curltls
 
 %patch40 -p1 -b .dlopen
 %patch42 -p1 -b .systzdata
@@ -1647,6 +1649,9 @@ fi
 
 
 %changelog
+* Tue Jul 26 2016 Remi Collet <rcollet@redhat.com> - 5.6.24-2
+- add options to enable TLS in curl
+
 * Mon Jul 25 2016 Remi Collet <rcollet@redhat.com> - 5.6.24-1
 - rebase to 5.6.24
 
