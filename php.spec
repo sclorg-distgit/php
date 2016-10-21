@@ -85,7 +85,7 @@
 
 Summary: PHP scripting language for creating dynamic web sites
 Name: %{?scl_prefix}php
-Version: 7.0.9
+Version: 7.0.10
 Release: 1%{?dist}
 # All files licensed under PHP version 3.01, except
 # Zend is licensed under Zend
@@ -136,7 +136,7 @@ Patch47: php-5.6.3-phpinfo.patch
 
 # Fixes for tests (300+)
 # Factory is droped from system tzdata
-Patch300: php-5.6.3-datetests.patch
+Patch300: php-7.0.10-datetests.patch
 # Revert changes for pcre < 8.34
 Patch301: php-7.0.0-oldpcre.patch
 
@@ -1591,6 +1591,10 @@ fi
 
 
 %changelog
+* Tue Sep  6 2016 Remi Collet <rcollet@redhat.com> - 7.0.10-1
+- rebase to 7.0.10 #1365397
+- fix default include_path
+
 * Thu Jul 21 2016 Remi Collet <rcollet@redhat.com> - 7.0.9-1
 - update to 7.0.9 for RHSCL 2.3
 
