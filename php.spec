@@ -110,8 +110,8 @@
 
 Summary: PHP scripting language for creating dynamic web sites
 Name: %{?scl_prefix}php
-Version: 5.6.24
-Release: 2%{?dist}
+Version: 5.6.25
+Release: 1%{?dist}
 # All files licensed under PHP version 3.01, except
 # Zend is licensed under Zend
 # TSRM is licensed under BSD
@@ -1649,6 +1649,9 @@ fi
 
 
 %changelog
+* Tue Sep  6 2016 Remi Collet <rcollet@redhat.com> - 5.6.25-1
+- rebase to 5.6.25 #1365401
+
 * Tue Jul 26 2016 Remi Collet <rcollet@redhat.com> - 5.6.24-2
 - add options to enable TLS in curl
 
