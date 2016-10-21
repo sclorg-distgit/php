@@ -24,7 +24,7 @@
 %global zendver     20131226
 %global pdover      20080721
 # Extension version
-%global opcachever  7.0.4-dev
+%global opcachever  7.0.6-dev
 
 # Use for first build of PHP (before pecl/jsonc)
 %global php_bootstrap   0
@@ -110,8 +110,8 @@
 
 Summary: PHP scripting language for creating dynamic web sites
 Name: %{?scl_prefix}php
-Version: 5.6.5
-Release: 9%{?dist}
+Version: 5.6.24
+Release: 1%{?dist}
 # All files licensed under PHP version 3.01, except
 # Zend is licensed under Zend
 # TSRM is licensed under BSD
@@ -139,15 +139,13 @@ Source51: opcache-default.blacklist
 Patch5: php-5.6.3-includedir.patch
 Patch6: php-5.6.3-embed.patch
 Patch7: php-5.3.0-recode.patch
-Patch8: php-5.6.3-libdb.patch
+Patch8: php-5.6.17-libdb.patch
 
 # Fixes for extension modules
-# https://bugs.php.net/63171 no odbc call during timeout
-Patch21: php-5.4.7-odbctimer.patch
 
 # Functional changes
 Patch40: php-5.4.0-dlopen.patch
-Patch42: php-5.6.3-systzdata-v11.patch
+Patch42: php-5.6.13-systzdata-v12.patch
 # See http://bugs.php.net/53436
 Patch43: php-5.4.0-phpize.patch
 # Use -lldap_r for OpenLDAP
@@ -160,44 +158,11 @@ Patch47: php-5.6.3-phpinfo.patch
 # Upstream fixes (100+)
 
 # Security fixes (200+)
-Patch135: php-5.6.5-CVE-2015-0273.patch
-Patch136: php-5.6.5-CVE-2014-9705.patch
-Patch137: php-5.6.5-CVE-2015-2301.patch
-Patch138: php-5.6.5-bug69085.patch
-Patch139: php-5.6.5-CVE-2015-2787.patch
-Patch140: php-5.6.5-CVE-2015-2348.patch
-Patch141: php-5.6.5-CVE-2015-1351.patch
-Patch142: php-5.6.5-CVE-2015-1352.patch
-Patch143: php-5.6.5-CVE-2015-2305.patch
-Patch144: php-5.6.5-CVE-2015-2331.patch
-Patch145: php-5.6.5-CVE-2015-4022.patch
-Patch146: php-5.6.5-CVE-2015-4021.patch
-Patch147: php-5.6.5-CVE-2015-4024.patch
-Patch148: php-5.6.5-CVE-2015-4025.patch
-Patch149: php-5.6.5-CVE-2015-3330.patch
-Patch150: php-5.6.5-bug69353.patch
-Patch151: php-5.6.5-CVE-2015-2783.patch
-Patch152: php-5.6.5-CVE-2015-3329.patch
-Patch153: php-5.6.5-bug68819.patch
-Patch154: php-5.6.5-bug69152.patch
-Patch155: php-5.6.5-CVE-2015-5589.patch
-Patch156: php-5.6.5-CVE-2015-5590.patch
-Patch157: php-5.6.5-CVE-2015-6833.patch
-Patch158: php-5.6.5-CVE-2015-7803.patch
-Patch159: php-5.6.5-CVE-2015-7804.patch
-Patch160: php-5.6.5-CVE-2015-6837.patch
-Patch161: php-5.6.5-CVE-2015-6835.patch
-Patch162: php-5.6.5-CVE-2015-6834-1.patch
-Patch163: php-5.6.5-CVE-2015-6832.patch
-Patch164: php-5.6.5-CVE-2015-6831.patch
-Patch165: php-5.6.5-CVE-2015-6834-2.patch
-Patch166: php-5.6.5-CVE-2015-6836.patch
-Patch167: php-5.6.5-CVE-2016-5385.patch
-
 
 # Fixes for tests (300+)
 # Factory is droped from system tzdata
-Patch300: php-5.6.3-datetests.patch
+# Relax some tests with erratic results with system tzdata
+Patch300: php-5.6.24-datetests.patch
 # Revert changes for pcre < 8.34
 Patch301: php-5.6.0-oldpcre.patch
 
@@ -748,8 +713,6 @@ support for using the enchant library to PHP.
 %patch7 -p1 -b .recode
 %patch8 -p1 -b .libdb
 
-%patch21 -p1 -b .odbctimer
-
 %patch40 -p1 -b .dlopen
 %patch42 -p1 -b .systzdata
 %patch43 -p1 -b .headers
@@ -762,39 +725,6 @@ support for using the enchant library to PHP.
 # upstream patches
 
 # security patches
-%patch135 -p1 -b .cve0273
-%patch136 -p1 -b .cve9705
-%patch137 -p1 -b .cve2301
-%patch138 -p1 -b .bug69085
-%patch139 -p1 -b .cve2787
-%patch140 -p1 -b .cve2348
-%patch141 -p1 -b .cve1351
-%patch142 -p1 -b .cve1352
-%patch143 -p1 -b .cve2305
-%patch144 -p1 -b .cve2331
-%patch145 -p1 -b .cve4022
-%patch146 -p1 -b .cve4021
-%patch147 -p1 -b .cve4024
-%patch148 -p1 -b .cve4025
-%patch149 -p1 -b .cve3330
-%patch150 -p1 -b .bug69353
-%patch151 -p1 -b .cve2783
-%patch152 -p1 -b .cve3329
-%patch153 -p1 -b .bug68819
-%patch154 -p1 -b .bug69152
-%patch155 -p1 -b .cve5589
-%patch156 -p1 -b .cve5590
-%patch157 -p1 -b .cve6833
-%patch158 -p1 -b .cve7803
-%patch159 -p1 -b .cve7804
-%patch160 -p1 -b .cve6837
-%patch161 -p1 -b .cve6835
-%patch162 -p1 -b .cve6834
-%patch163 -p1 -b .cve6832
-%patch164 -p1 -b .cve6831
-%patch165 -p1 -b .cve6834
-%patch166 -p1 -b .cve6836
-%patch167 -p1 -b .cve5385
 
 # Fixes for tests
 %patch300 -p1 -b .datetests
@@ -1717,6 +1647,9 @@ fi
 
 
 %changelog
+* Mon Jul 25 2016 Remi Collet <rcollet@redhat.com> - 5.6.24-1
+- rebase to 5.6.24
+
 * Mon Jul 25 2016 Remi Collet <rcollet@redhat.com> - 5.6.5-9
 - don't set environmental variable based on user supplied Proxy
   request header CVE-2016-5385
