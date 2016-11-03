@@ -86,7 +86,7 @@
 Summary: PHP scripting language for creating dynamic web sites
 Name: %{?scl_prefix}php
 Version: 7.0.10
-Release: 1%{?dist}
+Release: 2%{?dist}
 # All files licensed under PHP version 3.01, except
 # Zend is licensed under Zend
 # TSRM is licensed under BSD
@@ -782,7 +782,7 @@ sed -e "s/@PHP_APIVER@/%{apiver}%{isasuffix}/" \
  -e "s:@ETCDIR@:%{_sysconfdir}:" \
  -e "s:@INCDIR@:%{_includedir}:" \
  -e "s:@BINDIR@:%{_bindir}:" \
- -e "s:@SCL@:%{?scl:php56_}:" \
+ -e "s:@SCL@:%{?scl:php70_}:" \
  %{SOURCE3} | tee macros.php
 
 # php-fpm configuration files for tmpfiles.d
@@ -1591,6 +1591,9 @@ fi
 
 
 %changelog
+* Wed Nov  2 2016 Remi Collet <rcollet@redhat.com> - 7.0.10-2
+- fix definition of php_* macros #1390885
+
 * Tue Sep  6 2016 Remi Collet <rcollet@redhat.com> - 7.0.10-1
 - rebase to 7.0.10 #1365397
 - fix default include_path
