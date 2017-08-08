@@ -87,8 +87,8 @@
 
 Summary: PHP scripting language for creating dynamic web sites
 Name: %{?scl_prefix}php
-Version: 7.1.5
-Release: 2%{?dist}
+Version: 7.1.6
+Release: 1%{?dist}
 # All files licensed under PHP version 3.01, except
 # Zend is licensed under Zend
 # TSRM is licensed under BSD
@@ -1570,6 +1570,9 @@ fi
 
 
 %changelog
+* Thu Jun  8 2017 Remi Collet <rcollet@redhat.com> - 7.1.6-1
+- rebase to 7.1.6
+
 * Fri Jun  2 2017 Remi Collet <rcollet@redhat.com> - 7.1.5-2
 - fix License, timelib is MIT
 - add upstream security patches for oniguruma CVE-2017-9224,
