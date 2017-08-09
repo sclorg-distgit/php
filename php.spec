@@ -87,7 +87,7 @@
 
 Summary: PHP scripting language for creating dynamic web sites
 Name: %{?scl_prefix}php
-Version: 7.1.6
+Version: 7.1.8
 Release: 1%{?dist}
 # All files licensed under PHP version 3.01, except
 # Zend is licensed under Zend
@@ -137,7 +137,6 @@ Patch47: php-5.6.3-phpinfo.patch
 # Upstream fixes (100+)
 
 # Security fixes (200+)
-Patch200: php-7.1.5-oniguruma.patch
 
 # Fixes for tests (300+)
 # Factory is droped from system tzdata
@@ -685,7 +684,6 @@ support for JavaScript Object Notation (JSON) to PHP.
 # upstream patches
 
 # security patches
-%patch200 -p1 -b .oniguruma
 
 # Fixes for tests
 %patch300 -p1 -b .datetests
@@ -1570,6 +1568,10 @@ fi
 
 
 %changelog
+* Tue Aug  8 2017 Remi Collet <rcollet@redhat.com> - 7.1.8-1
+- rebase to 7.1.8 #1465319
+- drop upstream oniguruma patch
+
 * Thu Jun  8 2017 Remi Collet <rcollet@redhat.com> - 7.1.6-1
 - rebase to 7.1.6
 
