@@ -85,8 +85,8 @@
 
 Summary: PHP scripting language for creating dynamic web sites
 Name: %{?scl_prefix}php
-Version: 7.0.10
-Release: 2%{?dist}
+Version: 7.0.27
+Release: 1%{?dist}
 # All files licensed under PHP version 3.01, except
 # Zend is licensed under Zend
 # TSRM is licensed under BSD
@@ -119,8 +119,8 @@ Patch9: php-7.0.7-curl.patch
 # Fixes for extension modules
 
 # Functional changes
-Patch40: php-7.0.0-dlopen.patch
-Patch42: php-7.0.0-systzdata-v13.patch
+Patch40: php-7.0.17-dlopen.patch
+Patch42: php-7.0.0-systzdata-v14.patch
 # See http://bugs.php.net/53436
 Patch43: php-5.4.0-phpize.patch
 # Use -lldap_r for OpenLDAP
@@ -1591,6 +1591,10 @@ fi
 
 
 %changelog
+* Thu Jan  4 2018 Remi Collet <rcollet@redhat.com> - 7.0.27-1
+- rebase to 7.0.27 #1518843
+- improve check for valid tz file (tzdata patch v14)
+
 * Wed Nov  2 2016 Remi Collet <rcollet@redhat.com> - 7.0.10-2
 - fix definition of php_* macros #1390885
 
