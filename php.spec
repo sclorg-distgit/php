@@ -87,7 +87,7 @@
 
 Summary: PHP scripting language for creating dynamic web sites
 Name: %{?scl_prefix}php
-Version: 7.2.7
+Version: 7.2.8
 Release: 1%{?dist}
 # All files licensed under PHP version 3.01, except
 # Zend is licensed under Zend
@@ -1581,6 +1581,9 @@ fi
 
 
 %changelog
+* Wed Jul 18 2018 Remi Collet <rcollet@redhat.com> - 7.2.8-1
+- update to 7.2.8
+
 * Tue Jul 10 2018 Remi Collet <rcollet@redhat.com> - 7.2.7-1
 - update to 7.2.7 for rh-php72 collection in RHSCL 7.2
 - FPM: add getallheaders, backported from 7.3
