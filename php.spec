@@ -87,14 +87,15 @@
 
 Summary: PHP scripting language for creating dynamic web sites
 Name: %{?scl_prefix}php
-Version: 7.2.8
-Release: 1%{?dist}
+Version: 7.2.10
+Release: 2%{?dist}
 # All files licensed under PHP version 3.01, except
 # Zend is licensed under Zend
 # TSRM is licensed under BSD
 # main/snprintf.c, main/spprintf.c and main/rfc1867.c are ASL 1.0
 # ext/date/lib is MIT
-License: PHP and Zend and BSD and MIT and ASL 1.0
+# Zend/zend_sort is NCSA
+License: PHP and Zend and BSD and MIT and ASL 1.0 and NCSA
 Group: Development/Languages
 URL: http://www.php.net/
 
@@ -137,6 +138,7 @@ Patch47: php-5.6.3-phpinfo.patch
 Patch48: php-7.2.8-getallheaders.patch
 
 # Upstream fixes (100+)
+Patch100: php-7.2.10-mysql8.patch
 
 # Security fixes (200+)
 
@@ -193,6 +195,8 @@ which adds support for the PHP language to Apache HTTP 2.4 Server.
 %package cli
 Group: Development/Languages
 Summary: Command-line interface for PHP
+# sapi/cli/ps_title.c is PostgreSQL
+License:  PHP and Zend and BSD and MIT and ASL 1.0 and NCSA and PostgreSQL
 Requires: %{?scl_prefix}php-common%{?_isa} = %{version}-%{release}
 Provides: %{?scl_prefix}php-cgi = %{version}-%{release}, %{?scl_prefix}php-cgi%{?_isa} = %{version}-%{release}
 Provides: %{?scl_prefix}php-pcntl, %{?scl_prefix}php-pcntl%{?_isa}
@@ -691,6 +695,7 @@ support for JavaScript Object Notation (JSON) to PHP.
 %patch48 -p1 -b .getallheaders
 
 # upstream patches
+%patch100 -p1 -b .mysql8
 
 # security patches
 
@@ -1581,6 +1586,12 @@ fi
 
 
 %changelog
+* Thu Sep 27 2018 Remi Collet <rcollet@redhat.com> - 7.2.10-2
+- revert all MySQL 8 auth related changes #1631399
+
+* Thu Sep 13 2018 Remi Collet <rcollet@redhat.com> - 7.2.10-1
+- update to 7.2.10
+
 * Wed Jul 18 2018 Remi Collet <rcollet@redhat.com> - 7.2.8-1
 - update to 7.2.8
 
