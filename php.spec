@@ -61,7 +61,7 @@
 Summary: PHP scripting language for creating dynamic web sites
 Name: %{?scl_prefix}php
 Version: 7.3.7
-Release: 1%{?dist}
+Release: 2%{?dist}
 # All files licensed under PHP version 3.01, except
 # Zend is licensed under Zend
 # TSRM is licensed under BSD
@@ -755,7 +755,7 @@ sed -e "s/@PHP_APIVER@/%{apiver}%{isasuffix}/" \
  -e "s:@ETCDIR@:%{_sysconfdir}:" \
  -e "s:@INCDIR@:%{_includedir}:" \
  -e "s:@BINDIR@:%{_bindir}:" \
- -e "s:@SCL@:%{?scl:php72_}:" \
+ -e "s:@SCL@:%{?scl:php73_}:" \
  %{SOURCE3} | tee macros.php
 
 # php-fpm configuration files for tmpfiles.d
@@ -1452,6 +1452,9 @@ fi
 
 
 %changelog
+* Fri Jul 12 2019 Remi Collet <rcollet@redhat.com> - 7.3.7-2
+- fix rpm macro file
+
 * Fri Jul 12 2019 Remi Collet <rcollet@redhat.com> - 7.3.7-1
 - update to 7.3.7
 
