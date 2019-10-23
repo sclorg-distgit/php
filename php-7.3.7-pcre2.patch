@@ -1,0 +1,124 @@
+Upstream requires pcre2 version 10.30
+This patch allow 10.23 and set /X default behavior
+so bad escape raise a compile failure
+
+
+diff -ru php-7.3.7-old/ext/pcre/config0.m4 php-7.3.7/ext/pcre/config0.m4
+--- php-7.3.7-old/ext/pcre/config0.m4	2019-07-03 13:30:28.000000000 +0200
++++ php-7.3.7/ext/pcre/config0.m4	2019-07-10 17:23:11.963935030 +0200
+@@ -16,12 +16,12 @@
+         AC_PATH_PROG(PKG_CONFIG, pkg-config, no)
+       fi
+       if test -x "$PKG_CONFIG"; then
+-        AC_MSG_CHECKING(for PCRE2 10.30 or greater)
+-        if $PKG_CONFIG --atleast-version 10.30 libpcre2-8; then
++        AC_MSG_CHECKING(for PCRE2 10.23 or greater)
++        if $PKG_CONFIG --atleast-version 10.23 libpcre2-8; then
+           PCRE2_VER=`$PKG_CONFIG --modversion libpcre2-8`
+           AC_MSG_RESULT($PCRE2_VER)
+         else
+-          AC_MSG_ERROR(PCRE2 version 10.30 or later is required to compile php with PCRE2 support)
++          AC_MSG_ERROR(PCRE2 version 10.23 or later is required to compile php with PCRE2 support)
+         fi
+         PCRE2_LIB=`$PKG_CONFIG --libs libpcre2-8`
+         PCRE2_INC=`$PKG_CONFIG --cflags libpcre2-8`
+@@ -33,10 +33,10 @@
+     if test -z "$PCRE2_LIB"; then
+       PCRE2_CONF=$PHP_PCRE_REGEX/bin/pcre2-config
+       if test -x "$PCRE2_CONF"; then
+-        AC_MSG_CHECKING(for PCRE2 10.30 or greater)
++        AC_MSG_CHECKING(for PCRE2 10.23 or greater)
+         PCRE2_VER=`$PCRE2_CONF --version`
+-        if test "`echo $PCRE2_VER | sed 's,\.,,g'`" -lt 1030; then
+-          AC_MSG_ERROR(PCRE2 version 10.30 or later is required to compile php with PCRE2 support)
++        if test "`echo $PCRE2_VER | sed 's,\.,,g'`" -lt 1023; then
++          AC_MSG_ERROR(PCRE2 version 10.23 or later is required to compile php with PCRE2 support)
+         else
+           AC_MSG_RESULT($PCRE2_VER)
+         fi
+diff -ru php-7.3.7-old/ext/pcre/php_pcre.c php-7.3.7/ext/pcre/php_pcre.c
+--- php-7.3.7-old/ext/pcre/php_pcre.c	2019-07-03 13:30:28.000000000 +0200
++++ php-7.3.7/ext/pcre/php_pcre.c	2019-07-11 09:02:59.310972410 +0200
+@@ -51,7 +51,6 @@
+ 	uint32_t capture_count;
+ 	uint32_t name_count;
+ 	uint32_t compile_options;
+-	uint32_t extra_compile_options;
+ 	uint32_t refcount;
+ };
+ 
+@@ -161,7 +160,6 @@
+ 	pefree(block, 1);
+ }/*}}}*/
+ 
+-#define PHP_PCRE_DEFAULT_EXTRA_COPTIONS PCRE2_EXTRA_BAD_ESCAPE_IS_LITERAL
+ #define PHP_PCRE_PREALLOC_MDATA_SIZE 32
+ 
+ static void php_pcre_init_pcre2(uint8_t jit)
+@@ -182,12 +180,6 @@
+ 		}
+ 	}
+ 
+-	/* XXX The 'X' modifier is the default behavior in PCRE2. This option is
+-		called dangerous in the manual, as typos in patterns can cause
+-		unexpected results. We might want to to switch to the default PCRE2
+-		behavior, too, thus causing a certain BC break. */
+-	pcre2_set_compile_extra_options(cctx, PHP_PCRE_DEFAULT_EXTRA_COPTIONS);
+-
+ 	if (!mctx) {
+ 		mctx = pcre2_match_context_create(gctx);
+ 		if (!mctx) {
+@@ -297,7 +289,7 @@
+ {/*{{{*/
+ 	OnUpdateLong(entry, new_value, mh_arg1, mh_arg2, mh_arg3, stage);
+ 	if (mctx) {
+-		pcre2_set_depth_limit(mctx, (uint32_t)PCRE_G(recursion_limit));
++		pcre2_set_recursion_limit(mctx, (uint32_t)PCRE_G(recursion_limit));
+ 	}
+ 
+ 	return SUCCESS;
+@@ -531,7 +523,6 @@
+ {
+ 	pcre2_code			*re = NULL;
+ 	uint32_t			 coptions = 0;
+-	uint32_t			 extra_coptions = PHP_PCRE_DEFAULT_EXTRA_COPTIONS;
+ 	PCRE2_UCHAR	         error[128];
+ 	PCRE2_SIZE           erroffset;
+ 	int                  errnumber;
+@@ -679,7 +670,7 @@
+ 			case 'D':	coptions |= PCRE2_DOLLAR_ENDONLY;break;
+ 			case 'S':	/* Pass. */					break;
+ 			case 'U':	coptions |= PCRE2_UNGREEDY;		break;
+-			case 'X':	extra_coptions &= ~PCRE2_EXTRA_BAD_ESCAPE_IS_LITERAL;			break;
++			case 'X':	break;
+ 			case 'u':	coptions |= PCRE2_UTF;
+ 	/* In  PCRE,  by  default, \d, \D, \s, \S, \w, and \W recognize only ASCII
+        characters, even in UTF-8 mode. However, this can be changed by setting
+@@ -748,19 +739,9 @@
+ 	}
+ #endif
+ 
+-	/* Set extra options for the compile context. */
+-	if (PHP_PCRE_DEFAULT_EXTRA_COPTIONS != extra_coptions) {
+-		pcre2_set_compile_extra_options(cctx, extra_coptions);
+-	}
+-
+ 	/* Compile pattern and display a warning if compilation failed. */
+ 	re = pcre2_compile((PCRE2_SPTR)pattern, pattern_len, coptions, &errnumber, &erroffset, cctx);
+ 
+-	/* Reset the compile context extra options to default. */
+-	if (PHP_PCRE_DEFAULT_EXTRA_COPTIONS != extra_coptions) {
+-		pcre2_set_compile_extra_options(cctx, PHP_PCRE_DEFAULT_EXTRA_COPTIONS);
+-	}
+-
+ 	if (re == NULL) {
+ #if HAVE_SETLOCALE
+ 		if (key != regex) {
+@@ -806,7 +787,6 @@
+ 	new_entry.re = re;
+ 	new_entry.preg_options = poptions;
+ 	new_entry.compile_options = coptions;
+-	new_entry.extra_compile_options = extra_coptions;
+ 	new_entry.refcount = 0;
+ 
+ 	rc = pcre2_pattern_info(re, PCRE2_INFO_CAPTURECOUNT, &new_entry.capture_count);
